@@ -29,4 +29,33 @@ $(document).ready(function() {
 
     $('#list').append(newItem);
   }
+
+  $('#sharePost').on('click', function() {
+    var link = $('#inputURL').val();
+    var title = $('#inputTitle').val();
+    var user = $('#inputUser').val();
+    var createdAt = Date.now();
+    var votes = 0;
+
+    var data = {
+      link: link,
+      title: title,
+      user: user,
+      createdAt: createdAt,
+      votes: votes
+    };
+
+    var itemsListRef = database.ref('items');
+    var newItemRef = itemsListRef.push(data, function(err) {
+      if (err) {
+        console.error('Error saving to firebase', err);
+      } else {
+        console.log('Success saving to firebase!');
+        $('#inputURL').val('');
+        $('#inputTitle').val('');
+        $('#inputUser').val('');
+        $('#addPost').modal('hide');
+      }
+    });
+  });
 });
