@@ -7,27 +7,34 @@ $(document).ready(function() {
     storageBucket: "skillshareredditclone.appspot.com",
     messagingSenderId: "868707919715"
   };
+  var DAY_IN_MS = 86400000;
 
   firebase.initializeApp(config);
   var database = firebase.database();
 
-  database.ref('/items').once('value').then(function(snapshot) {
-    var results = snapshot.val();
-    for (var id in results) {
-      buildItemElement(results[id]);
-    }
-  });
+  database.ref('items')
+    .orderByChild('createdAt')
+    .startAt(Date.now() - DAY_IN_MS)
+    .on('child_added', function(snapshot) {
+      if ($('#loadingMsg').is(':visible')) {
+        $('#loadingMsg').hide();
+      }
+      var result = snapshot.val();
+      result.id = snapshot.key;
+      buildItemElement(result);
+    });
 
   function buildItemElement(item) {
     var $template = $('#content-template').clone();
     var newItem = $template.prop('content');
 
     $(newItem).find('.content-title').text(item.title);
+    $(newItem).find('.arrow').attr('id', item.id);
     $(newItem).find('.votes').text(item.votes);
     $(newItem).find('.content-link').attr('href', item.link).attr('target', '_blank');
     $(newItem).find('.content-meta').text(item.user + ' posted at ' + moment(item.createdAt).fromNow());
 
-    $('#list').append(newItem);
+    $('#list').prepend(newItem);
   }
 
   $('#sharePost').on('click', function() {
