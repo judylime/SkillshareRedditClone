@@ -1,4 +1,12 @@
 $(document).ready(function() {
+  var config = {
+    apiKey: "AIzaSyC-KUbKjOpvJv1UIg7yAAMD-xJ8_yt4nYk",
+    authDomain: "skillshareredditclone.firebaseapp.com",
+    databaseURL: "https://skillshareredditclone.firebaseio.com",
+    projectId: "skillshareredditclone",
+    storageBucket: "skillshareredditclone.appspot.com",
+    messagingSenderId: "868707919715"
+  };
   var createdAt = new Date();
   var dummyData = [
     {
@@ -23,6 +31,9 @@ $(document).ready(function() {
       createdAt: createdAt
     }
   ];
+
+  firebase.initializeApp(config);
+  var database = firebase.database();
 
   dummyData.forEach(function(item) {
     var $template = $('#content-template').clone();
